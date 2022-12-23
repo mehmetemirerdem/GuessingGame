@@ -1,10 +1,12 @@
-import {Text, View, StyleSheet, Alert} from 'react-native';
+import {Text, View, StyleSheet, Alert, FlatList} from 'react-native';
 import { useState, useEffect } from 'react';
 import Title from '../components/ui/Title';
 import NumberContainer from '../components/game/NumberContainer';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import Card from '../components/ui/Card';
 import InstructionText from '../components/ui/InstructionText';
+import {Ionicons} from '@expo/vector-icons';
+import GuessLogItem from '../components/game/GuessLogItem';
 
 let minBoundary = 1;
 let maxBoundary = 100;
@@ -23,12 +25,19 @@ function generateRandomBetween(min, max, exclude) {
 function GameScreen({userNumber, onGameOver}) {
     const initialGuess = generateRandomBetween(1, 100, userNumber);
     const [currentGuess, setCurrentGuess] = useState(initialGuess);
+    const [guessRounds, setGuessRounds] = useState([initialGuess]);
 
     useEffect( () => {
 		if (currentGuess === userNumber) {
 			onGameOver();
 		}
 	}, [currentGuess, userNumber, onGameOver]);
+
+    useEffect(() => {
+        minBoundary = 1;
+        maxBoundary = 100;
+        }, []);	//using an empty array causes this effect to be triggered only when the component is rendered again
+    
 
 	function nextGuessHandler(direction) {	//direction => lower, greater
 		if ((direction === 'lower' && currentGuess < userNumber) ||
@@ -46,7 +55,10 @@ function GameScreen({userNumber, onGameOver}) {
 		}
 		const newRndNumber = generateRandomBetween(minBoundary, maxBoundary, currentGuess);
 		setCurrentGuess(newRndNumber);
+        setGuessRounds(prevGuessRounds => [newRndNumber, prevGuessRounds]);
 	}
+
+    const guessRoundsListLength = guessRounds.length;
 
     return (
         <View style={styles.screen}>
@@ -56,14 +68,32 @@ function GameScreen({userNumber, onGameOver}) {
             <InstructionText style={styles.instructionText}>Yükselt veya Azalt</InstructionText>
             <View style={styles.buttonsContainer}>
 			 <View style={styles.buttonContainer}>
-                <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>-</PrimaryButton>
+                <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>
+                    <Ionicons name="md-remove" size={24} color="white"/>
+                </PrimaryButton>
 			 </View>
 			 <View style={styles.buttonContainer}>
-			 	<PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>+</PrimaryButton>
+			 	<PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>
+                    <Ionicons name="md-add" size={24} color="white"/>
+                </PrimaryButton>
              </View>
 			 </View>
             </Card>
-            {/* <View>OYUN KAYDI</View> */}
+            <View>
+			{guessRounds.map(guessRound => <Text key={guessRound}>{guessRound}</Text>)}
+            <FlatList
+				data={guessRounds}
+				renderItem={(itemData) => (
+					<GuessLogItem 
+					roundNumber={guessRoundsListLength - itemData.index}
+                    guess={itemData.item}
+					/>
+				)}
+				keyExtractor={(item) => item}
+			/>
+
+		  </View>
+
         </View>
     );
 
