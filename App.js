@@ -1,4 +1,4 @@
-import { StyleSheet, ImageBackground, SafeAreaView } from 'react-native';
+import { ImageBackground, SafeAreaView } from 'react-native';
 import { useState } from 'react';
 import StartGameScreen from './screens/StartGameScreen';
 import GameScreen from './screens/GameScreen';
@@ -7,6 +7,8 @@ import Colors from './constants/Colors';
 import GameOverScreen from './screens/GameOverScreen';
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
 
@@ -29,8 +31,9 @@ export default function App() {
     setGameIsOver(false);
   }
 
-  function gameOverHandler() {
-	setGameIsOver(true);
+  function gameOverHandler(numberOfRounds) {
+    setGameIsOver(true);
+    setGuessRounds(numberOfRounds);
   }
 
   function startNewGameHandler() {
@@ -58,6 +61,8 @@ export default function App() {
 
 
   return (
+    <>
+	<StatusBar style="light"/>	
     <LinearGradient colors={[Colors.primary700, Colors.accent500]} style={styles.rootScreen}>
       <ImageBackground
         source={require('./assets/images/background.jpg')}
@@ -70,6 +75,7 @@ export default function App() {
         </SafeAreaView>
       </ImageBackground>
     </LinearGradient>
+    </>
   );
 }
 

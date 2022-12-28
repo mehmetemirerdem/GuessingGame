@@ -1,4 +1,4 @@
-import { TextInput, View, StyleSheet, Alert, Text } from "react-native";
+import { TextInput, View, StyleSheet, Alert, useWindowDimensions, KeyboardAvoidingView, ScrollView } from "react-native";
 import { useState } from "react";
 import PrimaryButton from "../components/ui/PrimaryButton";
 import Colors from "../constants/Colors";
@@ -9,6 +9,10 @@ import InstructionText from '../components/ui/InstructionText';
 function StartGameScreen({onPickNumber}) {
 
     const [enteredNumber, setEnteredNumber] = useState('')
+
+    const { width, height } = useWindowDimensions();
+//when the orientation changes, this function will be executed and the height and width are updated
+
 
     function numberInputHandler(enteredText) {
         setEnteredNumber(enteredText);
@@ -32,8 +36,14 @@ function StartGameScreen({onPickNumber}) {
         setEnteredNumber('');
     }
 
+    const marginTopDistance = height < 380 ? 30 : 100;
+//Write this code just before the JSX code
+
+
     return (
-        <View style={styles.rootContainer}>
+        <ScrollView style={styles.screen}>
+	    <KeyboardAvoidingView style={styles.screen} behavior="position">
+        <View style={[styles.rootContainer, {marginTop: marginTopDistance}]}>
          <Title>Tuttuğum Sayıyı Tahmin Et</Title>
          <Card>
          <InstructionText>Bir sayı girin</InstructionText>
@@ -64,16 +74,24 @@ function StartGameScreen({onPickNumber}) {
              </View>
          </Card>
        </View>
+       </KeyboardAvoidingView>
+	</ScrollView>
+
      ); 
  
 }
 
 export default StartGameScreen;
 
+//const deviceHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+      },    
     rootContainer: {
 		flex: 1,
-		marginTop: 100,
+		//marginTop: deviceHeight < 380 ? 30 : 100,
 		alignItems: 'center'
 	},    
     inputContainer: {
