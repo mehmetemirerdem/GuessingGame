@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "proje2",
-    "slug": "proje2",
+    "name": "CardGame",
+    "slug": "CardGame",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
